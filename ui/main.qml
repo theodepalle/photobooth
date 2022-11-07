@@ -8,11 +8,9 @@ Window {
     visibility: Window.Maximized
     title: qsTr("Photobooth")
 
-
-    Button {
-        id: captureButton
-        text: qsTr("Capture")
-        anchors.centerIn: parent
-        onClicked: PhotoBooth.takePicture()
+    StackView {
+        id : stackView
+        anchors.fill: parent
+        initialItem: "CapturePage.qml"
     }
 }

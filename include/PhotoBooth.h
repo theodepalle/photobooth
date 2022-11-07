@@ -11,6 +11,8 @@ public:
     explicit PhotoBooth(QObject* parent = nullptr);
 public slots:
     void takePicture();
+    QString getLastCapturePath();
 private:
     std::unique_ptr<CameraDriver> camera;
+    QString m_lastCapturePath = "";
 };

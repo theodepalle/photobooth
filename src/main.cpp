@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     std::unique_ptr<PhotoBooth> myBooth = std::make_unique<PhotoBooth>();
 
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:src/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:ui/main.qml")));
 
     if (engine.rootObjects().isEmpty())
     {

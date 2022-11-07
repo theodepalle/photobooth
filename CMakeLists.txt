@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(photobooth)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -29,7 +29,11 @@ target_link_libraries(photobooth
 )
 
 set(qml_resource_files
-    "src/main.qml"
+    "ui/assets/camera-capture-icon.jpg"
+    "ui/assets/back-arrow.png"
+    "ui/main.qml"
+    "ui/CapturePage.qml"
+    "ui/DisplayPage.qml"
 )
 
 qt6_add_resources(photobooth "qml"
