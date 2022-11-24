@@ -29,9 +29,10 @@ target_link_libraries(photobooth
 )
 
 set(qml_resource_files
-    "ui/assets/camera-capture-icon.jpg"
+    "ui/assets/camera-capture-icon.png"
     "ui/assets/back-arrow.png"
     "ui/main.qml"
+    "ui/StandbyPage.qml"
     "ui/CapturePage.qml"
     "ui/DisplayPage.qml"
 )

@@ -3,23 +3,27 @@
 #include <QQmlContext>
 
 #include "PhotoBooth.h"
+#include "CameraDriver.h"
 
 int main(int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
 
-    std::unique_ptr<PhotoBooth> myBooth = std::make_unique<PhotoBooth>();
-
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:ui/main.qml")));
+    const QUrl url(u"qrc:ui/main.qml"_qs);
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
 
-    if (engine.rootObjects().isEmpty())
-    {
-        return -1;
-    }
+    CameraDriver cameraDriver;
+    PhotoBooth photoBooth(cameraDriver);
 
-    QQmlContext * rootContext = engine.rootContext();
-    rootContext->setContextProperty("PhotoBooth", myBooth.get());
+    engine.rootContext()->setContextProperty("photoBooth", &photoBooth);
+    qRegisterMetaType<PhotoBooth::State>();
+
+    engine.load(url);
 
     return app.exec();
 }

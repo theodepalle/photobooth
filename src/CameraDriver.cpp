@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <thread>
 
 #include "CameraDriver.h"
 
@@ -48,7 +49,7 @@ void CameraDriver::error_dumper(GPLogLevel level, const char *domain, const char
     }
 }
 
-bool CameraDriver::capture_to_file(const std::string &filename)
+void CameraDriver::captureToFile(const std::string &filename)
 {
     int fd;
     CameraFile *file;
@@ -57,7 +58,7 @@ bool CameraDriver::capture_to_file(const std::string &filename)
     if (gp_camera_capture(camera, GP_CAPTURE_IMAGE, &camera_file_path, context) != GP_OK)
     {
         std::cout << "Impossible to capture image" << std::endl;
-        return false;
+        return;
     }
 
     fd = open(filename.c_str(), O_CREAT | O_WRONLY, 0644);
@@ -65,14 +66,14 @@ bool CameraDriver::capture_to_file(const std::string &filename)
     if (gp_file_new_from_fd(&file, fd) != GP_OK)
     {
         std::cout << "gp_file_new_from_fd fail" << std::endl;
-        return false;
+        return;
     }
 
     if (gp_camera_file_get(camera, camera_file_path.folder, camera_file_path.name,
                            GP_FILE_TYPE_NORMAL, file, context) != GP_OK)
     {
         std::cout << "gp_camera_file_get fail" << std::endl;
-        return false;
+        return;
     }
 
     gp_file_free(file);
@@ -81,8 +82,30 @@ bool CameraDriver::capture_to_file(const std::string &filename)
                               context) != GP_OK)
     {
         std::cout << "gp_camera_file_delete fail" << std::endl;
-        return false;
+        return;
+    }
+}
+
+void CameraDriver::capturePreviewToFile(const std::string &filename)
+{
+    CameraFile *file;
+    if(gp_file_new(&file) != GP_OK)
+    {
+        std::cout << "gp_file_new fail" << std::endl;
+        return;
     }
 
-    return true;
+    if(gp_camera_capture_preview(camera, file, context) != GP_OK)
+    {
+        std::cout << "gp_camera_capture_preview fail" << std::endl;
+        return;
+    }
+
+    if(gp_file_save(file, filename.c_str()) != GP_OK)
+    {
+        std::cout << "gp_file_save fail" << std::endl;
+        return;
+    }
+
+    gp_file_unref(file);
 }
