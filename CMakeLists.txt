@@ -30,11 +30,21 @@ target_link_libraries(photobooth
 
 set(qml_resource_files
     "ui/assets/camera-capture-icon.png"
-    "ui/assets/back-arrow.png"
+    "ui/assets/touch-icon.png"
+    "ui/assets/smile.png"
+    "ui/assets/countdown/1.png"
+    "ui/assets/countdown/2.png"
+    "ui/assets/countdown/3.png"
+    "ui/assets/countdown/4.png"
+    "ui/assets/countdown/5.png"
+    "ui/assets/right.png"
+    "ui/assets/wrong.png"
+    "ui/assets/fonts/Dancing_script/DancingScript-VariableFont_wght.ttf"
     "ui/main.qml"
     "ui/StandbyPage.qml"
     "ui/CapturePage.qml"
     "ui/DisplayPage.qml"
+    "ui/Countdown.qml"
 )
 
 qt6_add_resources(photobooth "qml"

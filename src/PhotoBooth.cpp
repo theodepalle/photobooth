@@ -21,7 +21,6 @@ PhotoBooth::~PhotoBooth()
     else if(m_state == LIVE_VIEW)
     {
         stopLiveView();
-        m_liveViewThread.join();
     }
 
     if(m_captureThread.joinable())
@@ -32,7 +31,6 @@ PhotoBooth::~PhotoBooth()
     {
         m_liveViewThread.join();
     }
-
 }
 
 void PhotoBooth::capture()
@@ -71,12 +69,6 @@ void PhotoBooth::startLiveView()
         return;
     }
 
-    // if we already capture we need to join thread
-    if(m_liveViewThread.joinable())
-    {
-        m_liveViewThread.join();
-    }
-
     m_isLiveViewOn.store(true);
     m_liveViewThread = std::thread([&]() {
         {
@@ -110,6 +102,9 @@ void PhotoBooth::stopLiveView()
     m_isLiveViewOn.store(false);
     std::unique_lock lock(m_mutex);
     m_cv.wait(lock, [&]() { return m_state == IDLE; });
+
+    // we stop liveView so we can now join thread to reuse it on next liveView
+    m_liveViewThread.join();
 }
 
 void PhotoBooth::setState(const State& state)

@@ -9,11 +9,9 @@ Window {
     height: 600
     title: qsTr("Photobooth")
 
-    Connections{
-        target: photoBooth
-        function onNewState(state){
-            console.log(state)
-        }
+    FontLoader {
+        id: dancingScriptFont
+        source: "assets/fonts/Dancing_script/DancingScript-VariableFont_wght.ttf"
     }
 
     StackView {
@@ -21,4 +19,13 @@ Window {
        anchors.fill: parent
        initialItem: "StandbyPage.qml"
     }
+
+    //    BusyIndicator {
+    //        id: busyIndicator
+    //        width: parent.width / 5
+    //        height: parent.width / 5
+    //        anchors.centerIn: parent
+    //        Material.accent: Material.Blue
+    //        running : capturing
+    //    }
 }

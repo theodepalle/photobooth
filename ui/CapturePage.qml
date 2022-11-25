@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Controls.Material 2.15
 
 Rectangle{
     id: capturePage
@@ -27,42 +26,75 @@ Rectangle{
     }
 
     // Capture Logic
-    property bool capturing : false
-
-    Connections{
-          target: photoBooth
-          function onNewCapture(capturePath){
-              capturing = false
-              stackView.push("DisplayPage.qml", {"imagePath": capturePath})
-          }
-      }
-
     Image {
         id: captureButton
         source: "assets/camera-capture-icon.png"
-        width: parent.width / 4
+        width: parent.width / 2
         fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
-        visible: !capturing
+        opacity: 0.8
 
         MouseArea {
             anchors.fill: captureButton
             onClicked: {
-                capturing = true
-                photoBooth.stopLiveView()
-                photoBooth.capture()
+                captureButton.visible = false
+                countDown.start()
             }
         }
     }
 
-    BusyIndicator {
-        id: busyIndicator
-        width: parent.width / 5
-        height: parent.width / 5
-        anchors.centerIn: parent
-        Material.accent: Material.Blue
-        running : capturing
+    Countdown {
+        id: countDown
     }
+
+    Item {
+        id: smileDisplay
+        visible: false
+        width: parent.width
+        height: parent.height
+        anchors.centerIn: parent
+
+
+        Image {
+            id: smileImg
+            source : "assets/smile.png"
+            fillMode: Image.PreserveAspectFit
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: parent.height / 10
+        }
+
+        Text {
+            id: smileText
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: smileImg.top
+            text: "Smile !"
+            font.family: dancingScriptFont.font.family
+            font.pointSize: 128
+            color: "white"
+            horizontalAlignment: Text.AlignHCenter
+        }
+    }
+
+    Connections{
+          target: countDown
+          function onCountDownFinished(){
+                photoBooth.stopLiveView()
+                liveView.visible = false
+                photoBooth.capture()
+                smileDisplay.visible = true
+          }
+      }
+
+    Connections{
+          target: photoBooth
+          function onNewCapture(capturePath){
+              smileDisplay.visible = false
+              liveView.visible = true
+              captureButton.visible = true
+              stackView.push("DisplayPage.qml", {"imagePath": capturePath})
+          }
+      }
 }
 
 

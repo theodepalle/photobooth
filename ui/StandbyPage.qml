@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 Rectangle {
     id: standByPage
@@ -7,10 +8,23 @@ Rectangle {
     color: "#2B2B2B"
 
     Text {
-        anchors.centerIn: parent
-        text: "Click to start !"
-        font.pointSize: 24
-        color: "blue"
+        id: touchText
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width / 5
+        text: "Touchez <br> pour commencer !"
+        font.family: dancingScriptFont.font.family
+        font.pointSize: 64
+        color: "white"
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    Image {
+        id: touchIcon
+        source: "assets/touch-icon.png"
+        fillMode: Image.PreserveAspectFit
+        anchors.left: touchText.right
+        anchors.top: touchText.top
     }
 
     MouseArea {
@@ -20,5 +34,4 @@ Rectangle {
             stackView.push("CapturePage.qml")
         }
     }
-
 }

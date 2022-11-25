@@ -19,13 +19,29 @@ Rectangle{
     }
 
     Image {
-        id: backButton
-        source: "assets/back-arrow.png"
-        width: parent.width * 0.1
+        id: wrongButton
+        source: "assets/wrong.png"
         fillMode: Image.PreserveAspectFit
-        anchors.top: parent.top
+        anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.margins: 20
+        anchors.margins: 8
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                photoBooth.startLiveView()
+                stackView.pop()
+            }
+        }
+    }
+
+    Image {
+        id: rightButton
+        source: "assets/right.png"
+        fillMode: Image.PreserveAspectFit
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.margins: 8
 
         MouseArea {
             anchors.fill: parent
