@@ -5,17 +5,15 @@ Rectangle {
     id: standByPage
     width: 1080
     height: 600
-    color: "#2B2B2B"
+    color: "#FFFFFF"
 
     Text {
         id: touchText
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: parent.width / 5
+        anchors.centerIn: parent
         text: "Touchez <br> pour commencer !"
         font.family: dancingScriptFont.font.family
         font.pointSize: 64
-        color: "white"
+        color: "#2B2B2B"
         horizontalAlignment: Text.AlignHCenter
     }
 
@@ -23,8 +21,9 @@ Rectangle {
         id: touchIcon
         source: "assets/touch-icon.png"
         fillMode: Image.PreserveAspectFit
-        anchors.left: touchText.right
-        anchors.top: touchText.top
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.margins: parent.height / 8
     }
 
     MouseArea {

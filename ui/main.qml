@@ -19,13 +19,4 @@ Window {
        anchors.fill: parent
        initialItem: "StandbyPage.qml"
     }
-
-    //    BusyIndicator {
-    //        id: busyIndicator
-    //        width: parent.width / 5
-    //        height: parent.width / 5
-    //        anchors.centerIn: parent
-    //        Material.accent: Material.Blue
-    //        running : capturing
-    //    }
 }

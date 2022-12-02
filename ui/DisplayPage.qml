@@ -5,7 +5,7 @@ Rectangle{
     id: displayPage
     width: 1080
     height: 600
-    color: "#2B2B2B"
+    color: "#FFFFFF"
 
 
     property string imagePath: ""
@@ -29,6 +29,7 @@ Rectangle{
         MouseArea {
             anchors.fill: parent
             onClicked: {
+                photoBooth.deleteCapture(imagePath)
                 photoBooth.startLiveView()
                 stackView.pop()
             }
@@ -45,7 +46,7 @@ Rectangle{
 
         MouseArea {
             anchors.fill: parent
-            onClicked: stackView.pop(null)
+            onClicked: stackView.push("GetCapturePage.qml", {"imagePath": imagePath})
         }
     }
 }

@@ -1,0 +1,10 @@
+# CONFIG files for Photobooth v0
+
+# Email Parameters
+serverAddress: smtp.gmail.com
+serverPort: 465 # ssl
+senderEmail: example@gmail.com
+senderPassword: aaaaaaaa
+emailSubject: "Your awesome picture !"
+# emailContent can be html formated !
+emailContent: "Hey !\nYou will find your awesome picture attached :) Do not forget to share it !.\n"

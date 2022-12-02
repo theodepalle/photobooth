@@ -5,7 +5,7 @@ Rectangle{
     id: capturePage
     width: 1080
     height: 600
-    color: "#2B2B2B"
+    color: "#FFFFFF"
 
     // Live View in backGround
     Image {
@@ -29,10 +29,9 @@ Rectangle{
     Image {
         id: captureButton
         source: "assets/camera-capture-icon.png"
-        width: parent.width / 2
+        height: parent.height / 2
         fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
-        opacity: 0.8
 
         MouseArea {
             anchors.fill: captureButton
@@ -68,10 +67,10 @@ Rectangle{
             id: smileText
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: smileImg.top
-            text: "Smile !"
+            text: "Souriez !"
             font.family: dancingScriptFont.font.family
             font.pointSize: 128
-            color: "white"
+            color: "#2B2B2B"
             horizontalAlignment: Text.AlignHCenter
         }
     }
