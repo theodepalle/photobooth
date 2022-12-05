@@ -37,8 +37,7 @@ Rectangle {
         width: 600
         height: 125
         radius : 15
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: infoText.bottom
+        anchors.centerIn: parent
         anchors.topMargin: 40
         color: "#AAAAAA"
         border.color: "#2B2B2B"

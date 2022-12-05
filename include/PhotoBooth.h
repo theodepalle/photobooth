@@ -17,14 +17,16 @@ public:
     {
         std::string serverAddress;
         int serverPort;
-        int connectionType; // see SmtpClient::ConnectionType
+        std::string connectionType; // "ssl" or "tls"
         std::string senderEmail;
         std::string senderPassword;
-        std::string m_emailSubject;
+        std::string senderName;
+        std::string emailSubject;
         std::string emailContent;
     };
 
-    enum State {
+    enum State
+    {
         IDLE,
         CAPTURE,
         LIVE_VIEW,
@@ -39,7 +41,7 @@ public slots:
     void startLiveView();
     void stopLiveView();
     void deleteCapture(const QString& path);
-    void sendCaptureByMail(const QString& path, const QString& email);
+    void sendCaptureByMail(const QString& path, const QString& receiverMail);
 signals:
     void newCapture(const QString& capturePath);
     void newLiveView(const QString& viewPath);

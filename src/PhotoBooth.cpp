@@ -6,8 +6,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include <curl/curl.h>
-
+#include "EmailSender.h"
 #include "PhotoBooth.h"
 
 PhotoBooth::PhotoBooth(AbstractCameraDriver& cameraDriver, QObject* parent)
@@ -138,7 +137,7 @@ void PhotoBooth::deleteCapture(const QString& path)
     }
 }
 
-void PhotoBooth::sendCaptureByMail(const QString& path, const QString& email)
+void PhotoBooth::sendCaptureByMail(const QString& path, const QString& receiverMail)
 {
     if(m_state != IDLE)
     {
@@ -151,78 +150,28 @@ void PhotoBooth::sendCaptureByMail(const QString& path, const QString& email)
         m_sendMailThread.join();
     }
 
-    m_sendMailThread = std::thread([&, path, email]() {
+    m_sendMailThread = std::thread([&, path, receiverMail]() {
         {
             std::scoped_lock lock(m_mutex);
             setState(SENDING);
         }
 
-        CURL* curl;
-        CURLcode res = CURLE_OK;
+        // Create email
+        Email email;
+        email.setSender(m_params.senderEmail, m_params.senderName);
+        email.setReceiver(receiverMail.toStdString());
+        email.setSubject(m_params.emailSubject);
+        email.setContent(m_params.emailContent);
+        email.addAttachment(path.toStdString());
 
-        curl = curl_easy_init();
-        if(curl)
-        {
-            std::string url = "smtps://" + m_params.serverAddress + ":" +
-                              std::to_string(m_params.serverPort);
-            // std::string url = "smtps://" + m_params.serverAddress;
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-
-            // autantification
-            curl_easy_setopt(curl, CURLOPT_USERNAME, m_params.senderEmail.c_str());
-            curl_easy_setopt(curl, CURLOPT_PASSWORD, m_params.senderPassword.c_str());
-
-            // from
-            curl_easy_setopt(curl, CURLOPT_MAIL_FROM, m_params.senderEmail.c_str());
-
-            // to
-            struct curl_slist* recipients = NULL;
-            recipients = curl_slist_append(recipients, email.toStdString().c_str());
-            curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-
-            // headers
-            QDateTime date = QDateTime::currentDateTime();
-            std::string formattedDateTime =
-                date.toString("ddd, dd MMMM yyyy hh:mm:ss").toStdString() + " +0100";
-            std::vector<std::string> headers = {
-                "Date: " + formattedDateTime, "To: " + email.toStdString(),
-                "From: " + m_params.senderEmail + " (Photobooth)",
-                "Subject: " + m_params.m_emailSubject};
-            struct curl_slist* curlHeaders = NULL;
-            for(const std::string& header : headers)
-            {
-                curlHeaders = curl_slist_append(curlHeaders, header.c_str());
-            }
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curlHeaders);
-
-            // Content
-            curl_mime* mime = curl_mime_init(curl);
-            curl_mimepart* part = curl_mime_addpart(mime);
-            curl_mime_data(part, m_params.emailContent.c_str(), CURL_ZERO_TERMINATED);
-            struct curl_slist* slist =
-                curl_slist_append(NULL, "Content-Disposition: inline");
-            curl_mime_headers(part, slist, 1);
-
-            // Attachement
-            part = curl_mime_addpart(mime);
-            curl_mime_filedata(part, path.toStdString().c_str());
-            curl_mime_encoder(part, "base64");
-            curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-
-            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-            res = curl_easy_perform(curl);
-
-            if(res != CURLE_OK)
-                fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                        curl_easy_strerror(res));
-
-            // free
-            curl_slist_free_all(recipients);
-            curl_slist_free_all(curlHeaders);
-            curl_easy_cleanup(curl);
-            curl_mime_free(mime);
-        }
+        // And send it
+        EmailSender::ConnectionType connectionType =
+            m_params.connectionType == "tls" ? EmailSender::ConnectionType::TLS
+                                             : EmailSender::ConnectionType::SSL;
+        EmailSender emailSender(m_params.serverAddress, m_params.serverPort,
+                                connectionType);
+        emailSender.setCredentials(m_params.senderEmail, m_params.senderPassword);
+        emailSender.send(email);
 
         {
             std::scoped_lock lock(m_mutex);
@@ -252,9 +201,10 @@ void PhotoBooth::readParameters()
     // parameters are necessary (no default value)
     m_params.serverAddress = config["serverAddress"].as<std::string>();
     m_params.serverPort = config["serverPort"].as<int>();
-    // m_params.connectionType = config["connectionType"].as<int>();
+    m_params.connectionType = config["connectionType"].as<std::string>();
     m_params.senderEmail = config["senderEmail"].as<std::string>();
     m_params.senderPassword = config["senderPassword"].as<std::string>();
-    m_params.m_emailSubject = config["emailSubject"].as<std::string>();
+    m_params.senderName = config["senderName"].as<std::string>();
+    m_params.emailSubject = config["emailSubject"].as<std::string>();
     m_params.emailContent = config["emailContent"].as<std::string>();
 }

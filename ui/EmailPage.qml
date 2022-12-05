@@ -219,6 +219,21 @@ Rectangle{
         }
     }
 
+    Image {
+        id: backButton
+        source: "assets/back-button.png"
+        fillMode: Image.PreserveAspectFit
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.margins: parent.height / 10
+        visible: !sending
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: stackView.pop()
+        }
+    }
+
     InputPanel {
         id: inputPanel
         y: Qt.inputMethod.visible ? parent.height - inputPanel.height : parent.height

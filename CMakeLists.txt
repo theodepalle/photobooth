@@ -45,6 +45,7 @@ set(qml_resource_files
     "ui/assets/wrong.png"
     "ui/assets/green-button.png"
     "ui/assets/envelope.png"
+    "ui/assets/back-button.png"
     "ui/assets/fonts/Dancing_script/DancingScript-VariableFont_wght.ttf"
     "ui/main.qml"
     "ui/StandbyPage.qml"
